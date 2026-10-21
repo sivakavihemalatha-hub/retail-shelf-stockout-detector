@@ -1,8 +1,0 @@
-streamlit
-ultralytics
-torch
-torchvision
-joblib
-pandas
-scikit-learn
-opencv-python-headless
