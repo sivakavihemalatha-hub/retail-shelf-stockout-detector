@@ -1,1 +1,6 @@
-libgl1
+streamlit
+ultralytics
+numpy
+pillow
+torch
+torchvision
