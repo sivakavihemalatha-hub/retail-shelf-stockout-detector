@@ -1,7 +1,7 @@
 import streamlit as st
-import cv2
 import numpy as np
 from ultralytics import YOLO
+from PIL import Image, ImageDraw, ImageFont
 
 st.set_page_config(page_title="RetailVision AI — Stockout Monitor", layout="wide")
 
@@ -24,10 +24,9 @@ heavy_gap_threshold = st.sidebar.slider("Heavy Gap Trigger Threshold (Width %)",
 uploaded_file = st.file_uploader("📸 Upload an Aisle Image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    # Convert file stream payload to OpenCV standard image array
-    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-    img = cv2.imdecode(file_bytes, 1)
-    h, w, _ = img.shape
+    # Open image using native PIL (No OpenCV needed)
+    img = Image.open(uploaded_file).convert("RGB")
+    w, h = img.size
     
     # Run rapid inference
     results = model.predict(source=img, conf=conf_threshold, verbose=False)
@@ -37,39 +36,43 @@ if uploaded_file is not None:
     medium_gaps = 0
     heavy_gaps = 0
     
-    # Apply width-ratio geometric checking logic
-    for box in results[0].boxes:
-        x1, y1, x2, y2 = map(int, box.xyxy.tolist()[0])
-        box_width_ratio = (x2 - x1) / w
-        confidence = box.conf.item()
-        
-        if box_width_ratio >= heavy_gap_threshold:
-            gap_type = "🚨 HEAVY GAP"
-            box_color = (255, 0, 0) # RGB Red for heavy alerts
-            heavy_gaps += 1
-            heavy_gap_detected = True
-        elif box_width_ratio >= (heavy_gap_threshold / 2):
-            gap_type = "⚠️ Medium Gap"
-            box_color = (255, 165, 0) # RGB Orange
-            medium_gaps += 1
-        else:
-            gap_type = "🟢 Small Gap"
-            box_color = (0, 255, 0) # RGB Green
-            small_gaps += 1
-            
-        # Inject colorful annotations onto image array
-        cv2.rectangle(img, (x1, y1), (x2, y2), box_color, 3)
-        cv2.putText(img, f"{gap_type} ({confidence*100:.0f}%)", (x1, max(y1 - 10, 20)),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, box_color, 2)
-        
-    # Re-align color spectrum matrix for web browser rendering
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # Prepare drawing context
+    draw = ImageDraw.Draw(img)
     
+    # Apply width-ratio geometric checking logic
+    for result in results:
+        for box in result.boxes:
+            # Extract box coordinates
+            x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
+            box_width_ratio = (x2 - x1) / w
+            confidence = box.conf[0].item()
+            
+            if box_width_ratio >= heavy_gap_threshold:
+                gap_type = "HEAVY GAP"
+                box_color = (255, 0, 0) # Red
+                heavy_gaps += 1
+                heavy_gap_detected = True
+            elif box_width_ratio >= (heavy_gap_threshold / 2):
+                gap_type = "Medium Gap"
+                box_color = (255, 165, 0) # Orange
+                medium_gaps += 1
+            else:
+                gap_type = "Small Gap"
+                box_color = (0, 255, 0) # Green
+                small_gaps += 1
+                
+            # Draw bounding box outline with native PIL
+            draw.rectangle([x1, y1, x2, y2], outline=box_color, width=4)
+            
+            # Label overlay text
+            label_text = f"{gap_type} ({confidence*100:.0f}%)"
+            draw.text((x1 + 5, max(y1 - 20, 5)), label_text, fill=box_color)
+        
     # Structural presentation splits
     col1, col2 = st.columns()
     
     with col1:
-        st.image(img_rgb, caption="Processed Visual Telemetry Output", use_container_width=True)
+        st.image(img, caption="Processed Visual Telemetry Output", use_container_width=True)
         
     with col2:
         st.subheader("📊 Shelf Status Metrics")
