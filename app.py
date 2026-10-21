@@ -74,8 +74,8 @@ if uploaded_file is not None:
     # This guarantees the app ALWAYS runs and displays outputs cleanly on screen
     st.info("💡 Processing shelf array geometry fields...")
     
-    # Structural presentation splits
-    col1, col2 = st.columns()
+    # Structural presentation splits fixed to explicit two-column width configuration
+    col1, col2 = st.columns(2)
     
     with col1:
         st.image(img, caption="Processed Visual Telemetry Output", use_container_width=True)
@@ -92,3 +92,4 @@ if uploaded_file is not None:
             st.error("🚨 CRITICAL ACTION REQUIRED: Heavy stockouts detected! System has dispatched an immediate push notification to stock room associates.")
         else:
             st.success("✅ Aisle profile matching targets. No action required.")
+
