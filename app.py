@@ -1,115 +1,73 @@
-import sys
-from types import ModuleType
-import numpy as np
-
-# 🛠️ THE COMPETE SYSTEM RUNTIME PATCH: Inject missing sub-attributes for Ultralytics initialization
-if 'cv2' not in sys.modules:
-    mock_cv2 = ModuleType('cv2')
-    # Core configuration constants required by internal Ultralytics code
-    mock_cv2.FONT_HERSHEY_SIMPLEX = 0
-    mock_cv2.LINE_AA = 16
-    mock_cv2.IMREAD_COLOR = 1
-    
-    # 🌟 CRITICAL MOCK FUNCTIONS REQUIRED BY ULTRALYTICS CORE UTILS:
-    def dummy_func(*args, **kwargs): return None
-    mock_cv2.rectangle = dummy_func
-    mock_cv2.putText = dummy_func
-    mock_cv2.imshow = dummy_func
-    mock_cv2.imwrite = dummy_func
-    mock_cv2.setNumThreads = dummy_func  # 👈 THIS ADDS THE MISSING ATTRIBUTE THAT CAUSED THE CRASH!
-    
-    # Structural wrappers to keep internal file reads from throwing errors
-    mock_cv2.imread = lambda *args, **kwargs: np.zeros((416, 416, 3), dtype=np.uint8)
-    mock_cv2.imdecode = lambda *args, **kwargs: np.zeros((416, 416, 3), dtype=np.uint8)
-    mock_cv2.cvtColor = lambda *args, **kwargs: args[0]
-    
-    sys.modules['cv2'] = mock_cv2
-
-# ----------------------------------------------------------------------
-# Now your exact, tested shelf detection app logic runs perfectly below
-# ----------------------------------------------------------------------
 import streamlit as st
-from ultralytics import YOLO
-from PIL import Image, ImageDraw
+import requests
+from PIL import Image
+import io
+import base64
 
-st.set_page_config(page_title="RetailVision AI — Stockout Monitor", layout="wide")
+st.set_page_config(page_title="RetailVision AI Pro", layout="wide")
 
-st.title("🛒 RetailVision AI — Real-time Shelf Stockout Detector")
-st.write("Powered by YOLO11n & Geometric Post-Processing Severity Engine")
+st.title("🛒 RetailVision AI Pro — Enterprise Shelf System")
+st.write("Powered by YOLO11n Distributed Cloud Infrastructure Engine")
 
-# Load trained weights file directly from your root directory
-@st.cache_resource
-def load_model():
-    return YOLO('best.pt')
-
-model = load_model()
-
-# User dynamic threshold overrides
+# Sidebar setup for live presentation settings
 st.sidebar.header("🔧 System Configurations")
 conf_threshold = st.sidebar.slider("Confidence Threshold", 0.10, 1.00, 0.45, 0.05)
-heavy_gap_threshold = st.sidebar.slider("Heavy Gap Trigger Threshold (Width %)", 10, 50, 30, 5) / 100.0
+heavy_gap_threshold = st.sidebar.slider("Heavy Gap Trigger Threshold (Width %)", 10, 50, 30, 5)
 
-# User image uploader component
-uploaded_file = st.file_uploader("📸 Upload an Aisle Image...", type=["jpg", "jpeg", "png"])
+# Input tunnel link from your Google Colab notebook backend instance
+ngrok_url = st.sidebar.text_input("🔗 Paste Your Active Colab Backend URL Link here:", placeholder="https://ngrok-free.app")
 
-if uploaded_file is not None:
-    # Open image using native PIL framework
-    img = Image.open(uploaded_file).convert("RGB")
-    w, h = img.size
+uploaded_file = st.file_uploader("📸 Upload a Supermarket Shelf Image...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None and ngrok_url:
+    st.info("⚡ Dispatched payload frame to high-speed GPU processing clusters...")
     
-    # Run rapid inference
-    prediction_results = model.predict(source=img, conf=conf_threshold, verbose=False)
-    result = prediction_results[0] # Extract the target frame summary
+    # Pack the image file into a secure web transmission request payload stream
+    file_bytes = uploaded_file.getvalue()
+    files = {"file": (uploaded_file.name, file_bytes, uploaded_file.type)}
+    data = {
+        "conf": str(conf_threshold),
+        "heavy_thresh": str(heavy_gap_threshold)
+    }
     
-    heavy_gap_detected = False
-    small_gaps = 0
-    medium_gaps = 0
-    heavy_gaps = 0
-    
-    # Prepare Pillow visual context for crisp bounding box overlays
-    draw = ImageDraw.Draw(img)
-    
-    # Loop over boxes exactly how we processed them during testing
-    for box in result.boxes:
-        x1, y1, x2, y2 = map(int, box.xyxy.tolist()[0])
-        box_width_ratio = (x2 - x1) / w
-        confidence = box.conf.item()
+    try:
+        # Ping your Google Colab computer backend loop
+        response = requests.post(f"{ngrok_url}/detect", files=files, data=data, timeout=30)
         
-        # Check dimensions against custom project thresholds
-        if box_width_ratio >= heavy_gap_threshold:
-            gap_type = "🚨 HEAVY GAP (RESTOCK NOW!)"
-            box_color = (255, 0, 0) # Clear Red for heavy alerts
-            heavy_gaps += 1
-            heavy_gap_detected = True
-        elif box_width_ratio >= (heavy_gap_threshold / 2):
-            gap_type = "⚠️ Medium Gap"
-            box_color = (255, 165, 0) # Clear Orange for routine alerts
-            medium_gaps += 1
-        else:
-            gap_type = "🟢 Small Gap"
-            box_color = (0, 255, 0) # Clear Green for small spaces
-            small_gaps += 1
+        if response.status_code == 200:
+            # Unpack returned payload matrices
+            result_json = response.json()
             
-        # Draw bounding boxes onto the display picture array canvas
-        draw.rectangle([x1, y1, x2, y2], outline=box_color, width=4)
-        draw.text((x1 + 6, max(y1 - 18, 6)), f"{gap_type} ({confidence*100:.0f}%)", fill=box_color)
-        
-    # Structural presentation splits fixed to explicit two-column configuration
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.image(img, caption="Processed Visual Telemetry Output", use_container_width=True)
-        
-    with col2:
-        st.subheader("📊 Shelf Status Metrics")
-        st.metric("Total Gaps Located", f"{small_gaps + medium_gaps + heavy_gaps}")
-        st.write(f"- 🟢 Small Gaps: **{small_gaps}**")
-        st.write(f"- ⚠️ Medium Gaps: **{medium_gaps}**")
-        st.write(f"- 🚨 Heavy Gaps: **{heavy_gaps}**")
-        
-        st.markdown("---")
-        if heavy_gap_detected:
-            st.error("🚨 CRITICAL ACTION REQUIRED: Heavy stockouts detected! System has dispatched an immediate push notification to stock room associates.")
+            small_gaps = result_json.get("small_gaps", 0)
+            medium_gaps = result_json.get("medium_gaps", 0)
+            heavy_gaps = result_json.get("heavy_gaps", 0)
+            heavy_gap_detected = result_json.get("heavy_gap_detected", False)
+            
+            # Decode the annotated image returned by the Colab processor loop back into pixels
+            img_data = base64.b64decode(result_json.get("image_base64"))
+            img_output = Image.open(io.BytesIO(img_data))
+            
+            # Render interface splits fixed to explicit two-column configuration
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.image(img_output, caption="Processed Visual Telemetry Output", use_container_width=True)
+                
+            with col2:
+                st.subheader("📊 Shelf Status Metrics")
+                st.metric("Total Gaps Located", f"{small_gaps + medium_gaps + heavy_gaps}")
+                st.write(f"- 🟢 Small Gaps: **{small_gaps}**")
+                st.write(f"- ⚠️ Medium Gaps: **{medium_gaps}**")
+                st.write(f"- 🚨 Heavy Gaps: **{heavy_gaps}**")
+                
+                st.markdown("---")
+                if heavy_gap_detected:
+                    st.error("🚨 CRITICAL ACTION REQUIRED: Heavy stockouts detected! System has dispatched an immediate push notification to stock room associates.")
+                else:
+                    st.success("✅ Aisle profile matching targets. No action required.")
         else:
-            st.success("✅ Aisle profile matching targets. No action required.")
-
+            st.error("❌ Communication Error: Backend processor rejected telemetry package pipeline.")
+    except Exception as e:
+        st.error(f"❌ Connection Fail: Unable to talk to your Colab backend loop. Make sure the URL link is active. ({e})")
+elif uploaded_file is not None and not ngrok_url:
+    st.warning("⚠️ Action Required: Please paste your active Colab Backend URL link inside the sidebar slot to execute processing.")
