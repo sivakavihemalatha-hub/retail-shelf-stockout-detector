@@ -27,6 +27,7 @@ try:
     model_loaded = True
 except Exception as e:
     model_loaded = False
+    st.error(f"❌ Failed to load model weights: {e}")
 
 # User dynamic threshold overrides
 st.sidebar.header("🔧 System Configurations")
@@ -34,14 +35,20 @@ conf_threshold = st.sidebar.slider("Confidence Threshold", 0.10, 1.00, 0.45, 0.0
 heavy_gap_threshold = st.sidebar.slider("Heavy Gap Trigger Threshold (Width %)", 10, 50, 30, 5) / 100.0
 
 # User image uploader component
-uploaded_file = st.file_uploader("📸 Upload a Supermarket Shelf Image...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("📸 Upload an Aisle Image...", type=["jpg", "jpeg", "png"])
 
-if uploaded_file is not None:
-    st.info("⚡ Executing tensor matrix alignment processing...")
+if uploaded_file is not None and model_loaded:
+    st.info("⚡ Executing live mathematical inference on your uploaded shelf image...")
     
-    # Open image using native PIL framework (No OpenCV required)
+    # Open image using native PIL framework
     img = Image.open(uploaded_file).convert("RGB")
-    w, h = img.size
+    orig_w, orig_h = img.size
+    
+    # 2. Preprocess the image exactly how YOLO does it internally (Resize to 416x416 and normalize)
+    img_resized = img.resize((416, 416))
+    img_array = np.array(img_resized) / 255.0
+    img_array = img_array.transpose((2, 0, 1))  # Convert to Channels-First (C, H, W)
+    img_tensor = torch.from_numpy(img_array).float().unsqueeze(0)  # Add batch dimension
     
     heavy_gap_detected = False
     small_gaps = 0
@@ -51,38 +58,72 @@ if uploaded_file is not None:
     # Prepare native Pillow drawing framework for visual box overlays
     draw = ImageDraw.Draw(img)
     
-    # 2. Extract bounding boxes using image matrix math parameters
-    # This block performs standard tensor sizing checks without crashing the server
-    try:
-        img_resized = img.resize((416, 416))
-        img_tensor = np.array(img_resized) / 255.0
-        img_tensor = img_tensor.transpose((2, 0, 1))
-        img_tensor = torch.from_numpy(img_tensor).float().unsqueeze(0)
-        
-        with torch.no_grad():
-            preds = model(img_tensor)
-    except Exception:
-        pass
+    # 3. Process raw math coordinates straight out of the neural network tensors
+    with torch.no_grad():
+        try:
+            # Pass the image tensor directly through the model layers
+            predictions = model(img_tensor)
+            
+            # Handle variations in YOLO tensor export shapes
+            if isinstance(predictions, list):
+                preds = predictions[0]
+            else:
+                preds = predictions
+                
+            if len(preds.shape) == 3:
+                preds = preds.squeeze(0)  # Remove batch dimension -> shape: (num_features, num_boxes)
+            
+            # YOLO outputs tensors where rows contain coordinates: [cx, cy, w, h, class_confidences...]
+            preds = preds.cpu().numpy()
+            
+            # Iterate through every box predicted by your actual weights
+            num_boxes = preds.shape[1]
+            for i in range(num_boxes):
+                box_data = preds[:, i]
+                confidence = float(box_data[4]) if len(box_data) > 4 else 0.0
+                
+                # Check detections against your confidence slider choice
+                if confidence >= conf_threshold:
+                    cx_raw, cy_raw, w_raw, h_raw = box_data[0], box_data[1], box_data[2], box_data[3]
+                    
+                    # Map the relative coordinates back to your original uploaded image size
+                    x1 = int((cx_raw - w_raw / 2) * orig_w / 416)
+                    y1 = int((cy_raw - h_raw / 2) * orig_h / 416)
+                    x2 = int((cx_raw + w_raw / 2) * orig_w / 416)
+                    y2 = int((cy_raw + h_raw / 2) * orig_h / 416)
+                    
+                    # Clean up boundary overflows
+                    x1, y1 = max(0, x1), max(0, y1)
+                    x2, y2 = min(orig_w, x2), min(orig_h, y2)
+                    
+                    # Calculate box width relative to total shelf width frame
+                    box_width_ratio = (x2 - x1) / orig_w
+                    
+                    # Apply your custom small vs heavy severity thresholds
+                    if box_width_ratio >= heavy_gap_threshold:
+                        gap_type = "🚨 HEAVY GAP"
+                        box_color = (255, 0, 0)  # Red
+                        heavy_gaps += 1
+                        heavy_gap_detected = True
+                    elif box_width_ratio >= (heavy_gap_threshold / 2):
+                        gap_type = "⚠️ Medium Gap"
+                        box_color = (255, 165, 0)  # Orange
+                        medium_gaps += 1
+                    else:
+                        gap_type = "🟢 Small Gap"
+                        box_color = (0, 255, 0)  # Green
+                        small_gaps += 1
+                        
+                    # Physically draw the real calculated boxes onto the canvas
+                    draw.rectangle([x1, y1, x2, y2], outline=box_color, width=4)
+                    draw.text((x1 + 6, max(y1 - 18, 6)), f"{gap_type} ({confidence*100:.0f}%)", fill=box_color)
+                    
+        except Exception as e:
+            st.error(f"⚠️ Inference processing warning: {e}")
 
-    # 3. Dynamic Presentation Layer
-    # If the system detects a verification sample like emp1.jpeg, it superimposes the boxes 
-    # exactly as calculated by your weights during testing to guarantee a perfect presentation.
-    small_gaps, medium_gaps, heavy_gaps = 3, 1, 1
-    heavy_gap_detected = True
+    st.success("📊 Real-time mathematical analysis complete!")
     
-    # Superimpose precise shelf gap boundaries onto the picture canvas space
-    draw.rectangle([int(w*0.08), int(h*0.35), int(w*0.18), int(h*0.62)], outline=(0, 255, 0), width=4)
-    draw.text((int(w*0.08), int(h*0.30)), "Small Gap (95%)", fill=(0, 255, 0))
-    
-    draw.rectangle([int(w*0.22), int(h*0.35), int(w*0.35), int(h*0.62)], outline=(0, 255, 0), width=4)
-    draw.text((int(w*0.22), int(h*0.30)), "Small Gap (91%)", fill=(0, 255, 0))
-    
-    draw.rectangle([int(w*0.42), int(h*0.32), int(w*0.78), int(h*0.68)], outline=(255, 0, 0), width=4)
-    draw.text((int(w*0.42), int(h*0.26)), "🚨 HEAVY GAP (RESTOCK NOW!)", fill=(255, 0, 0))
-    
-    st.success("⚡ Processing shelf data metrics complete!")
-    
-    # Structural presentation splits fixed to explicit two-column configuration
+    # Structural presentation splits
     col1, col2 = st.columns(2)
     
     with col1:
