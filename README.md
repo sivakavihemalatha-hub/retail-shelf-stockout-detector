@@ -11,7 +11,38 @@
     <b>An automated Computer Vision pipeline designed to monitor supermarket on-shelf availability, calculate stockout severity metrics using relative frame geometry, and trigger real-time warehouse replenishment alerts.</b>
   </p>
 
-  <h3>🚀 <a href="https://retail-shelf-stockout-detector-29tugmqjdyf5idvheizc4e.streamlit.app/">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
+  <h3>🚀 <a href="https://streamlit.app">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
+</div>
+
+---
+
+## 📸 Visual Telemetry Diagnostics
+Below is the system execution pipeline showcasing a raw supermarket aisle snapshot before processing, alongside the live real-time model detection output layer:
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><b>1️⃣ Input Target (Before Detection)</b></td>
+      <td align="center"><b>2️⃣ AI Output Layer (After Detection)</b></td>
+    </tr>
+    <tr>
+      <td><img src="assets/before.jpg" width="450" alt="Supermarket Shelf Input Frame"/></td>
+      <td><img src="assets/after.jpg" width="450" alt="YOLO11 ONNX Bounding Box Outputs"/></td>
+    </tr>
+  </table>
+  <p><i>Note: To display your actual store frames here, simply upload your sample photos into a folder named "assets" in your repository as "before.jpg" and "after.jpg".</i></p>
+</div>
+
+---
+
+## 📂 Source Dataset Repository
+The neural core of this application was trained and validated using a custom-engineered partition derived from the baseline retail inventory tracking repository:
+
+<div align="center">
+
+[![Dataset Source](https://shields.io)](https://roboflow.com)
+
+<h3>🎯 <a href="https://roboflow.com">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
 </div>
 
 ---
@@ -38,10 +69,12 @@ Rather than training raw data blindly, a comprehensive data audit was performed 
 ### 2️⃣ Traffic-Light Severity Engine
 To achieve enterprise-grade speeds, bounding box dimension analysis is completely decoupled from the neural network weights layer. A lightweight Python geometric rule engine evaluates the width of each box relative to the total width of the horizontal shelf rack frame (`box_width_ratio`):
 
+```yaml
 [TOTAL HORIZONTAL AISLE SHELF ROW FRAME WIDTH]
-├────────── 🟢 < 15% ──────────┤ Small Gap  -> Logged silently (Safe/No Action)
-├────────── ⚠️ 15% - 29% ──────┤ Medium Gap -> Scheduled for routine restock shift
-├────────── 🚨 >= 30% ─────────┤ HEAVY GAP  -> TRIGGERS IMMEDIATE EMERGENCY ALARM 📞
+  ├── 🟢 Small Gap  (< 15% Width)  -> Logged silently (Safe / No Action required)
+  ├── ⚠️ Medium Gap (15% - 29% Width) -> Flagged for routine daily restocking shifts
+  └── 🚨 HEAVY GAP  (>= 30% Width) -> TRIGGERS IMMEDIATE EMERGENCY STOCKROOM ALARM 📞
+```
 
 ### 3️⃣ Edge Server Optimization
 To make the application resilient to varying cloud hosting environments:
