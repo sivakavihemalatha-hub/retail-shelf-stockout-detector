@@ -1,21 +1,24 @@
 import sys
 from types import ModuleType
+import numpy as np
 
-# 🛠️ THE SYSTEM RUNTIME PATCH: Mock cv2 in memory to prevent the libGL server crash
-# This creates a dummy cv2 layer that tricks the backend into importing successfully
+# 🛠️ THE COMPETE SYSTEM RUNTIME PATCH: Inject missing sub-attributes for Ultralytics initialization
 if 'cv2' not in sys.modules:
     mock_cv2 = ModuleType('cv2')
-    # Inject the core configuration constants required by the internal Ultralytics code
+    # Core configuration constants required by internal Ultralytics code
     mock_cv2.FONT_HERSHEY_SIMPLEX = 0
     mock_cv2.LINE_AA = 16
     mock_cv2.IMREAD_COLOR = 1
     
-    # Empty placeholder functions so YOLO can boot up completely error-free
+    # 🌟 CRITICAL MOCK FUNCTIONS REQUIRED BY ULTRALYTICS CORE UTILS:
     def dummy_func(*args, **kwargs): return None
     mock_cv2.rectangle = dummy_func
     mock_cv2.putText = dummy_func
     mock_cv2.imshow = dummy_func
     mock_cv2.imwrite = dummy_func
+    mock_cv2.setNumThreads = dummy_func  # 👈 THIS ADDS THE MISSING ATTRIBUTE THAT CAUSED THE CRASH!
+    
+    # Structural wrappers to keep internal file reads from throwing errors
     mock_cv2.imread = lambda *args, **kwargs: np.zeros((416, 416, 3), dtype=np.uint8)
     mock_cv2.imdecode = lambda *args, **kwargs: np.zeros((416, 416, 3), dtype=np.uint8)
     mock_cv2.cvtColor = lambda *args, **kwargs: args[0]
@@ -26,7 +29,6 @@ if 'cv2' not in sys.modules:
 # Now your exact, tested shelf detection app logic runs perfectly below
 # ----------------------------------------------------------------------
 import streamlit as st
-import numpy as np
 from ultralytics import YOLO
 from PIL import Image, ImageDraw
 
@@ -69,7 +71,7 @@ if uploaded_file is not None:
     
     # Loop over boxes exactly how we processed them during testing
     for box in result.boxes:
-        x1, y1, x2, y2 = map(int, box.xyxy.tolist())
+        x1, y1, x2, y2 = map(int, box.xyxy.tolist()[0])
         box_width_ratio = (x2 - x1) / w
         confidence = box.conf.item()
         
@@ -82,6 +84,7 @@ if uploaded_file is not None:
         elif box_width_ratio >= (heavy_gap_threshold / 2):
             gap_type = "⚠️ Medium Gap"
             box_color = (255, 165, 0) # Clear Orange for routine alerts
+            medium_gaps += 1
         else:
             gap_type = "🟢 Small Gap"
             box_color = (0, 255, 0) # Clear Green for small spaces
