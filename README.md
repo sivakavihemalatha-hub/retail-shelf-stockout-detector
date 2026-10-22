@@ -42,7 +42,7 @@ The neural core of this application was trained and validated using a custom-eng
 
 [![Dataset Source](https://shields.io)](https://roboflow.com)
 
-<h3>🎯 <a href="https://roboflow.com">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
+<h3>🎯 <a href="https://universe.roboflow.com/srm-university-52jqz/retail-shelf-availability/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
 </div>
 
 ---
