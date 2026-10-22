@@ -158,4 +158,3 @@ if uploaded_file is not None and model_loaded:
             st.error("🚨 CRITICAL ACTION REQUIRED: Heavy stockouts detected! System has dispatched an immediate push notification to stock room associates.")
         else:
             st.success("✅ Aisle profile matching targets. All items fully stocked.")
-
