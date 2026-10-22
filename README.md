@@ -11,7 +11,7 @@
     <b>An automated Computer Vision pipeline designed to monitor supermarket on-shelf availability, calculate stockout severity metrics using relative frame geometry, and trigger real-time warehouse replenishment alerts.</b>
   </p>
 
-  <h3>🚀 <a href="https://streamlit.app">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
+  <h3>🚀 <a href="https://retail-shelf-stockout-detector-29tugmqjdyf5idvheizc4e.streamlit.app/">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
 </div>
 
 ---
