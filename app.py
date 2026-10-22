@@ -9,7 +9,7 @@ st.title("🛒 RetailVision AI Pro — Enterprise Shelf System")
 #st.write("Powered by YOLO11 Web-Safe Core ONNX Math Runtime (Zero-Graphics Dependency)")
 
 # 🌟 Your Chosen Optimization Disclaimer Banner
-st.warning("⚠️ Optimization Note: This model is calibrated for specific supermarket aisle structures. Accuracy may vary across different store layouts, product types, and camera lighting conditions.
+st.warning("⚠️ Optimization Note: This model is calibrated for specific supermarket aisle structures. Accuracy may vary across different store layouts, product types, and camera lighting conditions.")
 
 # 1. Load the universal model weights using pure ONNX Runtime
 @st.cache_resource
