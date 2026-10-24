@@ -2,8 +2,7 @@
 
 <div align="center">
   
-  [![Author - Sivakavi Hemalatha](https://shields.io)](https://github.com)
-  [![Python Version](https://shields.io)](https://www.python.org)
+  [![Python Version](https://shields.io)](https://python.org)
   [![Framework](https://shields.io)](https://streamlit.io)
   [![Inference Engine](https://shields.io)](https://onnxruntime.ai)
   [![Model Core](https://shields.io)](https://github.com)
@@ -12,15 +11,8 @@
     <b>An automated Computer Vision pipeline designed to monitor supermarket on-shelf availability, calculate stockout severity metrics using relative frame geometry, and trigger real-time warehouse replenishment alerts.</b>
   </p>
 
-  <h3>🚀 <a href="https://retail-shelf-stockout-detector-29tugmqjdyf5idvheizc4e.streamlit.app/">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
+  <h3>🚀 <a href="https://streamlit.app">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
 </div>
-
----
-
-## 👩‍💻 Lead Developer Profile
-* **Developer Name:** **Sivakavi Hemalatha**
-* **Project Role:** Lead Core AI & MLOps Infrastructure Engineer
-* **Objective:** Engineering stable, zero-graphics-dependency distributed cloud models for real-world automated retail item environments.
 
 ---
 
@@ -58,9 +50,9 @@ The neural core of this application was trained and validated using a custom-eng
 
 <div align="center">
 
-[![Dataset Source](https://shields.io)](https://universe.roboflow.com/srm-university-52jqz/retail-shelf-availability/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true)
+[![Dataset Source](https://shields.io)](https://roboflow.com)
 
-<h3>🎯 <a href="https://universe.roboflow.com/srm-university-52jqz/retail-shelf-availability/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
+<h3>🎯 <a href="https://roboflow.com">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
 </div>
 
 ---
@@ -107,7 +99,7 @@ To run this application locally on your laptop or machine, open your terminal an
 
 ### 1. Clone the Code Repository
 ```bash
-git clone https://github.com/retail-shelf-stockout-detector.git
+git clone https://github.com
 cd retail-shelf-stockout-detector
 ```
 
@@ -131,3 +123,8 @@ streamlit run app.py
 
 ## 🛡️ License & Project Baseline
 This project was developed as a finalized production MVP utilizing data structures from the SRM University research partition. All code layers are open-sourced for retail automation review.
+
+---
+
+## ✍️ Author
+* **Sivakavi Hemalatha** 
