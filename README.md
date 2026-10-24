@@ -7,7 +7,7 @@
   [![Inference Engine](https://shields.io)](https://onnxruntime.ai)
   [![Model Core](https://shields.io)](https://github.com)
 
-  <h3>🚀 <a href="https://retail-shelf-stockout-detector-29tugmqjdyf5idv维持c4e.streamlit.app/">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
+  <h3>🚀 <a href="https://retail-shelf-stockout-detector-29tugmqjdyf5idvheizc4e.streamlit.app/">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
 </div>
 
 ---
