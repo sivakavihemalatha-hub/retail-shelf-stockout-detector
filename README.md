@@ -7,12 +7,21 @@
   [![Inference Engine](https://shields.io)](https://onnxruntime.ai)
   [![Model Core](https://shields.io)](https://github.com)
 
-  <p align="center">
-    <b>An automated Computer Vision pipeline designed to monitor supermarket on-shelf availability, calculate stockout severity metrics using relative frame geometry, and trigger real-time warehouse replenishment alerts.</b>
-  </p>
-
-  <h3>🚀 <a href="https://streamlit.app">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
+  <h3>🚀 <a href="https://retail-shelf-stockout-detector-29tugmqjdyf5idv维持c4e.streamlit.app/">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
 </div>
+
+---
+
+## 🎯 Project Objective & Overview
+**RetailVision AI Pro** is a production-grade, automated computer vision product engineered to eliminate retail revenue loss caused by empty storefront space. Instead of relying on slow, manual employee shelf walks, this system leverages advanced deep learning to conduct **continuous 24/7 camera monitoring of store aisles**.
+
+### 🔍 What the System Finds:
+The underlying intelligence framework scans shelf image snapshots to instantly locate **empty slots and product stockouts (gaps)** where merchandise has run out. 
+
+### 🚨 The Automated Restocking Alert Workflow:
+Once a gap is detected, the software calculates its physical horizontal span relative to the overall shelf frame width. 
+* Minor, routine spaces are logged silently without bothering the store staff.
+* When a **critical brand stockout** is discovered (e.g., an entire shelf row of product is missing), the system automatically triggers an **Immediate Emergency Stockroom Alert** to dispatch retail workers to restock that specific item instantly.
 
 ---
 
@@ -52,7 +61,7 @@ The neural core of this application was trained and validated using a custom-eng
 
 [![Dataset Source](https://shields.io)](https://roboflow.com)
 
-<h3>🎯 <a href="https://roboflow.com">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
+<h3>🎯 <a href="https://universe.roboflow.com/srm-university-52jqz/retail-shelf-availability/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
 </div>
 
 ---
@@ -126,5 +135,5 @@ This project was developed as a finalized production MVP utilizing data structur
 
 ---
 
-## ✍️ Author
+## ✍ . Author
 * **Sivakavi Hemalatha** 
