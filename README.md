@@ -26,8 +26,8 @@ Below is the system execution pipeline showcasing a raw supermarket aisle snapsh
       <td align="center"><b>2️⃣ AI Output Layer (After Detection)</b></td>
     </tr>
     <tr>
-      <td><img src="assets/before.jpg" width="450" alt="Supermarket Shelf Input Frame"/></td>
-      <td><img src="assets/after.jpg" width="450" alt="YOLO11 ONNX Bounding Box Outputs"/></td>
+      <td><img src="assets/before.jpeg" width="450" alt="Supermarket Shelf Input Frame"/></td>
+      <td><img src="assets/after.jpeg" width="450" alt="YOLO11 ONNX Bounding Box Outputs"/></td>
     </tr>
   </table>
   <p><i>Note: To display your actual store frames here, simply upload your sample photos into a folder named "assets" in your repository as "before.jpg" and "after.jpg".</i></p>
