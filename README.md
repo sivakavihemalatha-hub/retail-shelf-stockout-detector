@@ -2,7 +2,8 @@
 
 <div align="center">
   
-  [![Python Version](https://shields.io)](https://python.org)
+  [![Author - Sivakavi Hemalatha](https://shields.io)](https://github.com)
+  [![Python Version](https://shields.io)](https://www.python.org)
   [![Framework](https://shields.io)](https://streamlit.io)
   [![Inference Engine](https://shields.io)](https://onnxruntime.ai)
   [![Model Core](https://shields.io)](https://github.com)
@@ -13,6 +14,13 @@
 
   <h3>🚀 <a href="https://retail-shelf-stockout-detector-29tugmqjdyf5idvheizc4e.streamlit.app/">CLICK HERE TO ACCESS LIVE CLOUD APP INTERFACE</a> 🚀</h3>
 </div>
+
+---
+
+## 👩‍💻 Lead Developer Profile
+* **Developer Name:** **Sivakavi Hemalatha**
+* **Project Role:** Lead Core AI & MLOps Infrastructure Engineer
+* **Objective:** Engineering stable, zero-graphics-dependency distributed cloud models for real-world automated retail item environments.
 
 ---
 
@@ -30,8 +38,18 @@ Below is the system execution pipeline showcasing a raw supermarket aisle snapsh
       <td><img src="assets/after.jpeg" width="450" alt="YOLO11 ONNX Bounding Box Outputs"/></td>
     </tr>
   </table>
-  <p><i>Note: To display your actual store frames here, simply upload your sample photos into a folder named "assets" in your repository as "before.jpg" and "after.jpg".</i></p>
 </div>
+
+---
+
+## 🛠️ Core Technologies Stack
+This system is constructed using an optimized, lightweight software framework designed for high-performance edge computing layouts:
+
+*   **Artificial Intelligence Core:** `YOLO11n (Nano)` — State-of-the-art bounding-box object localization network.
+*   **Mathematical Compilation Layer:** `ONNX Runtime` — Converts structural deep learning files into high-speed raw matrix execution arrays.
+*   **Front-End Web Engineering:** `Streamlit Web Framework` — Python-native interactive corporate UI layout management.
+*   **Image Matrix Pipeline:** `Pillow (PIL)` — Natively transforms RGB channel byte data layers directly inside memory buffers.
+*   **Array Processing Foundations:** `NumPy` — Processes multidimensional array vector coordinates for spatial bounding geometry.
 
 ---
 
@@ -40,7 +58,7 @@ The neural core of this application was trained and validated using a custom-eng
 
 <div align="center">
 
-[![Dataset Source](https://shields.io)](https://roboflow.com)
+[![Dataset Source](https://shields.io)](https://universe.roboflow.com/srm-university-52jqz/retail-shelf-availability/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true)
 
 <h3>🎯 <a href="https://universe.roboflow.com/srm-university-52jqz/retail-shelf-availability/browse?queryText=&pageSize=100&startingIndex=0&browseQuery=true">CLICK HERE TO VIEW SOURCE DATASET ON ROBOFLOW</a></h3>
 </div>
@@ -89,7 +107,7 @@ To run this application locally on your laptop or machine, open your terminal an
 
 ### 1. Clone the Code Repository
 ```bash
-git clone https://github.com
+git clone https://github.com/retail-shelf-stockout-detector.git
 cd retail-shelf-stockout-detector
 ```
 
